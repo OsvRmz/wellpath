@@ -20,17 +20,12 @@ export default function Historial() {
   const [selectedISO, setSelectedISO] = useState(null);
   const [busyHabitId, setBusyHabitId] = useState(null);
 
+
   const handleApiError = (err) => {
-    const status = err?.response?.status;
-    const msg = err?.response?.data?.message || err.message || "Error";
-    if (status === 401 || status === 403) {
-      alert("Tu sesión expiró o no tienes permisos. Serás redirigido al login.");
-      localStorage.removeItem("token");
-      navigate("/login", { replace: true });
-      return;
-    }
+    const msg = err?.response?.data?.message || err?.message || "Error";
     setError(msg);
   };
+
 
   const startOfMonday = (d0 = DateTime.now(), tz = "UTC") => {
     const d = d0.setZone(tz).startOf("day");

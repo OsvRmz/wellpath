@@ -18,7 +18,6 @@ const PORT = process.env.PORT || 3000;
 const SECRET = process.env.JWT_SECRET || "cambiame";
 const __dirname = path.resolve();
 
-// --- Conexión a MongoDB ---
 mongoose.set("strictQuery", false);
 mongoose
   .connect(process.env.MONGODB_URI)
@@ -28,7 +27,6 @@ mongoose
     process.exit(1);
   });
 
-// --- MODELOS (simple, en un archivo para prototipo) ---
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -82,7 +80,31 @@ historySchema.pre("save", function (next) {
 });
 const HabitHistory = mongoose.model("HabitHistory", historySchema);
 
-// util
+const reportSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  type: { type: String, enum: ["bug", "feedback", "other"], default: "other" },
+  title: { type: String, required: true },
+  description: { type: String, default: "" },
+  metadata: { type: mongoose.Schema.Types.Mixed, default: {} },
+  status: { type: String, enum: ["open", "closed"], default: "open" },
+  handledBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+  resolvedAt: { type: Date, default: null },
+  createdAt: { type: Date, default: () => new Date() },
+  updatedAt: { type: Date, default: () => new Date() }
+});
+
+reportSchema.pre("save", function (next) {
+  this.updatedAt = new Date();
+  next();
+});
+
+// índices útiles
+reportSchema.index({ userId: 1, status: 1 });
+reportSchema.index({ createdAt: -1 });
+
+const Report = mongoose.model("Report", reportSchema);
+
+
 function todayISOForTimezone(timezone) {
   return DateTime.now().setZone(timezone || "UTC").toISODate();
 }
@@ -356,6 +378,72 @@ app.get("/api/stats/month", authMiddleware, async (req, res) => {
   res.json(semanas);
 });
 
+/**
+ * REPORTS
+ */
+app.post("/api/reports", authMiddleware, async (req, res) => {
+  const { type, title, description, metadata } = req.body;
+  if (!title) return res.status(400).json({ message: "title es requerido" });
+
+  const r = new Report({
+    userId: req.user._id,
+    type: ["bug", "feedback", "other"].includes(type) ? type : "other",
+    title,
+    description: description || "",
+    metadata: metadata || {}
+  });
+
+  await r.save();
+  res.status(201).json(r);
+});
+
+app.get("/api/reports", authMiddleware, async (req, res) => {
+  const limit = Math.min(100, parseInt(req.query.limit || "50", 10));
+  const reports = await Report.find({ userId: req.user._id }).sort({ createdAt: -1 }).limit(limit).lean();
+  res.json(reports);
+});
+
+
+app.get("/api/reports/:id", authMiddleware, async (req, res) => {
+  const id = req.params.id;
+  const rpt = await Report.findById(id).lean();
+  if (!rpt) return res.status(404).json({ message: "Reporte no encontrado" });
+  if (rpt.userId.toString() !== req.user._id.toString()) return res.status(403).json({ message: "Acceso denegado" });
+  res.json(rpt);
+});
+
+
+app.patch("/api/reports/:id", authMiddleware, async (req, res) => {
+  const id = req.params.id;
+  const updates = req.body;
+  const rpt = await Report.findById(id);
+  if (!rpt) return res.status(404).json({ message: "Reporte no encontrado" });
+  if (rpt.userId.toString() !== req.user._id.toString()) return res.status(403).json({ message: "Acceso denegado" });
+
+  const allowed = ["title", "description", "metadata", "status"];
+  for (const k of allowed) {
+    if (k in updates) rpt[k] = updates[k];
+  }
+
+  if (updates.status === "closed") {
+    rpt.resolvedAt = new Date();
+    rpt.handledBy = req.user._id;
+  }
+
+  await rpt.save();
+  res.json(rpt);
+});
+
+app.delete("/api/reports/:id", authMiddleware, async (req, res) => {
+  const id = req.params.id;
+  const rpt = await Report.findById(id);
+  if (!rpt) return res.status(404).json({ message: "Reporte no encontrado" });
+  if (rpt.userId.toString() !== req.user._id.toString()) return res.status(403).json({ message: "Acceso denegado" });
+  await rpt.deleteOne();
+  res.status(204).send();
+});
+
+
 // Servir archivos estáticos de React
 app.use(express.static(path.join(__dirname, "dist")));
 
@@ -365,12 +453,31 @@ app.get(/.*/, (req, res) => {
 });
 
 /**
- * Error handler final
- * express-async-errors entregará aquí las excepciones de routes async
+ * Error handler 
  */
 app.use((err, req, res, next) => {
   console.error("ERROR:", err);
-  res.status(500).json({ message: "Error interno" });
+
+  // Si el error viene de JWT (token expirado o inválido)
+  if (err.name === "TokenExpiredError") {
+    return res.status(403).json({ message: "Token expirado" });
+  }
+  if (err.name === "JsonWebTokenError") {
+    return res.status(403).json({ message: "Token inválido" });
+  }
+
+  // Si el error tiene un código de estado definido (por ejemplo, lanzado manualmente)
+  if (err.status) {
+    return res.status(err.status).json({ message: err.message || "Error" });
+  }
+
+  // Si es un error de validación 
+  if (err.name === "ValidationError") {
+    return res.status(400).json({ message: "Datos inválidos", details: err.errors });
+  }
+
+  // Error interno genérico
+  res.status(500).json({ message: "Error interno del servidor" });
 });
 
 app.listen(PORT, () => {

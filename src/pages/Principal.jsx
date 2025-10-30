@@ -21,18 +21,11 @@ export default function Principal() {
   const [error, setError] = useState(null);
   const [infoMessage, setInfoMessage] = useState("");
 
-  // Maneja errores: 401/403 -> redirect al login; otros -> setError
   const handleApiError = (err) => {
-    const status = err?.response?.status;
-    const msg = err?.response?.data?.message || err.message || "Error";
-    if (status === 401 || status === 403) {
-      alert("Tu sesión expiró");
-      localStorage.removeItem("token");
-      navigate("/login", { replace: true });
-      return;
-    }
+    const msg = err?.response?.data?.message || err?.message || "Error";
     setError(msg);
   };
+
 
   const loadAll = async () => {
     setLoading(true);

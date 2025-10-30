@@ -23,9 +23,10 @@ export default function Signup() {
     setLoading(true);
     try {
       await signupUser({ nombre: name, correo: email, contraseña: password });
+      alert("Usuario registrado con éxito");
       navigate("/login");
     } catch (err) {
-      setError("Error al registrarse");
+      setError(err.message || "Error al registrarse");
     } finally {
       setLoading(false);
     }

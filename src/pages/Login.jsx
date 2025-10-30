@@ -5,8 +5,8 @@ import { useNavigate, Link } from "react-router-dom";
 
 export default function Login() {
   const { login } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [correo, setCorreo] = useState("");
+  const [contraseña, setContraseña] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -17,18 +17,18 @@ export default function Login() {
     setError(null);
 
     try {
-      const data = await loginUser({ email, password });
-      login(data.token, data.user);
-      navigate("/dashboard"); 
+      const data = await loginUser({ correo, contraseña });
+      login(data.token, data.usuario);
+      navigate("/dashboard");
     } catch (err) {
-      setError("Credenciales incorrectas");
+      setError(err.message || "Credenciales incorrectas");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-full bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md">
         <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
           Iniciar sesión
@@ -37,19 +37,19 @@ export default function Login() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="email"
-            placeholder="Email"
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Correo electrónico"
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            value={correo}
+            onChange={(e) => setCorreo(e.target.value)}
             required
           />
 
           <input
             type="password"
             placeholder="Contraseña"
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            value={contraseña}
+            onChange={(e) => setContraseña(e.target.value)}
             required
           />
 
@@ -58,7 +58,7 @@ export default function Login() {
             disabled={loading}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50"
           >
-            {loading ? "Ingresando..." : "Login"}
+            {loading ? "Ingresando..." : "Entrar"}
           </button>
 
           {error && (

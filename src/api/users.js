@@ -1,23 +1,33 @@
+// src/api/users.js
 import client from "./client";
 
-// Obtener un usuario por ID
-export const getUserById = async (id) => {
+/**
+ * Obtener perfil actual (requiere token)
+ * GET /api/users/me
+ * @returns {Object} { id, name, email, timezone, locale, createdAt }
+ */
+export const fetchProfile = async () => {
   try {
-    const response = await client.get(`/users/${id}`);
-    return response.data;
+    const res = await client.get("/api/users/me");
+    return res.data;
   } catch (error) {
-    console.error(`Error al obtener usuario ${id}:`, error);
-    throw error;
+    const msg = error.response?.data?.message || "Error al obtener perfil";
+    throw new Error(msg);
   }
-}; 
+};
 
-export const getString = async () => {
+/**
+ * Actualizar perfil del usuario logueado
+ * PUT /api/users/me
+ * @param {Object} updates { name?, timezone?, locale? }
+ * @returns {Object} { message, user }
+ */
+export const updateProfile = async (updates) => {
   try {
-    const response = await client.get('/users/string');
-    return response.data;
-  }catch (error) {
-    console.error('error');
-    throw error;
+    const res = await client.put("/api/users/me", updates);
+    return res.data;
+  } catch (error) {
+    const msg = error.response?.data?.message || "Error al actualizar perfil";
+    throw new Error(msg);
   }
-}
-
+};

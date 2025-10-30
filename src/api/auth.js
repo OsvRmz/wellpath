@@ -1,22 +1,47 @@
 import client from "./client";
 
-// Login
-export const loginUser = async (credentials) => { // entrada -> {email,password}
+/**
+ * Iniciar sesión
+ * @param {Object} credentials { correo, contraseña }
+ * @returns {Object} { token, usuario }
+ */
+export const loginUser = async (credentials) => {
   try {
-    const response = await client.post("/auth/login", credentials);
-    return response.data; // respuesta -> {token, user }
+    const res = await client.post("/auth/login", credentials);
+    return res.data; // { token, usuario }
   } catch (error) {
-    console.error("Error al hacer login:", error);
-    throw error;
+    const msg = error.response?.data?.message || "Error al iniciar sesión";
+    throw new Error(msg);
   }
 };
 
-export const signupUser = async (credentials) => { //entrada -> {name,email,password}
+/**
+ * Registrar nuevo usuario
+ * @param {Object} data { nombre, correo, contraseña, timezone?, locale? }
+ * @returns {Object} { message }
+ */
+export const signupUser = async (data) => {
   try {
-    const response = await client.post('/auth/signup', credentials);
-    return response.data // respuesta -> {message}
-  }catch(error){
-    console.error('Error al registrarse:', error);
-    throw error;
+    const res = await client.post("/auth/signup", data);
+    return res.data; // { message }
+  } catch (error) {
+    const msg = error.response?.data?.message || "Error al registrar usuario";
+    throw new Error(msg);
   }
-}
+};
+
+/**
+ * Logout (cliente) — elimina token local
+ * No contacta al servidor (simplemente borra token de localStorage)
+ */
+export const logoutClient = () => {
+  localStorage.removeItem("token");
+};
+
+/**
+ * Helper opcional: guardar token localmente
+ * @param {String} token
+ */
+export const saveToken = (token) => {
+  if (token) localStorage.setItem("token", token);
+};

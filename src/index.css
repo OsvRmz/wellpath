@@ -1,1 +1,221 @@
 @import 'tailwindcss';
+
+/* Paleta de colores pastel para Wellpath */
+:root {
+  --cork-bg: #F5F1E8;
+  --light-pink: #FFB6C1;
+  --light-green: #98FB98;
+  --light-purple: #DDA0DD;
+  --light-yellow: #FFFFE0;
+  --light-blue: #D4C5A0;
+  --soft-pink: #FFC0CB;
+  --soft-green: #90EE90;
+  --soft-purple: #E6E6FA;
+  --soft-yellow: #FFFACD;
+  --soft-blue: #E8DCC0;
+  --text-dark: #2D3748;
+  --text-medium: #4A5568;
+  --text-light: #718096;
+}
+
+/* Fondo de cartón */
+.cork-bg {
+  background: linear-gradient(135deg, #D2B48C 0%, #BC9A6A 100%);
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(139, 69, 19, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(160, 82, 45, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 40% 60%, rgba(101, 67, 33, 0.15) 0%, transparent 50%),
+    linear-gradient(45deg, transparent 40%, rgba(139, 69, 19, 0.05) 50%, transparent 60%);
+}
+
+/* Navbar estilo espiral de libreta */
+.notebook-spiral {
+  background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+  background-image: 
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(139, 69, 19, 0.3) 2px,
+      rgba(139, 69, 19, 0.3) 4px
+    ),
+    linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.2),
+    0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Fondo decorativo con elementos */
+.decorative-bg {
+  background: linear-gradient(135deg, #FFF8DC 0%, #F5F5DC 100%);
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(255, 182, 193, 0.3) 0%, transparent 30%),
+    radial-gradient(circle at 90% 80%, rgba(255, 255, 224, 0.4) 0%, transparent 30%),
+    radial-gradient(circle at 30% 70%, rgba(255, 182, 193, 0.2) 0%, transparent 25%),
+    radial-gradient(circle at 70% 30%, rgba(255, 255, 224, 0.3) 0%, transparent 25%);
+  position: relative;
+}
+
+.decorative-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23FFD700' fill-opacity='0.1'%3E%3Cpath d='M20 20c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10zm10 0c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10z'/%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* Tarjetas con estilo de sticky notes */
+.sticky-note {
+  background: linear-gradient(135deg, var(--light-pink) 0%, #FFB6C1 100%);
+  border-radius: 8px;
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: rotate(-1deg);
+  transition: transform 0.2s ease;
+}
+
+.sticky-note:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+
+.sticky-note-green {
+  background: linear-gradient(135deg, var(--light-green) 0%, #98FB98 100%);
+}
+
+.sticky-note-purple {
+  background: linear-gradient(135deg, var(--light-purple) 0%, #DDA0DD 100%);
+}
+
+.sticky-note-yellow {
+  background: linear-gradient(135deg, var(--light-yellow) 0%, #FFFFE0 100%);
+}
+
+.sticky-note-blue {
+  background: linear-gradient(135deg, var(--light-blue) 0%, #C4B896 100%);
+}
+
+/* Botones con estilo pastel */
+.btn-pastel {
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-pastel:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-pink {
+  background: linear-gradient(135deg, var(--light-pink) 0%, #FFB6C1 100%);
+  color: var(--text-dark);
+}
+
+.btn-green {
+  background: linear-gradient(135deg, var(--light-green) 0%, #98FB98 100%);
+  color: var(--text-dark);
+}
+
+.btn-purple {
+  background: linear-gradient(135deg, var(--light-purple) 0%, #DDA0DD 100%);
+  color: var(--text-dark);
+}
+
+.btn-yellow {
+  background: linear-gradient(135deg, var(--light-yellow) 0%, #FFFFE0 100%);
+  color: var(--text-dark);
+}
+
+.btn-blue {
+  background: linear-gradient(135deg, var(--light-blue) 0%, #C4B896 100%);
+  color: var(--text-dark);
+}
+
+/* Título principal con estilo script */
+.title-script {
+  font-family: 'Brush Script MT', cursive, serif;
+  font-size: 4rem;
+  font-weight: 400;
+  color: var(--text-dark);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.title-script-large {
+  font-family: 'Brush Script MT', cursive, serif;
+  font-size: 5rem;
+  font-weight: 400;
+  color: var(--text-dark);
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Formularios con estilo pastel */
+.form-pastel {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.8) 100%);
+  border-radius: 12px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 2px 8px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.input-pastel {
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.input-pastel:focus {
+  border-color: var(--light-pink);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 3px rgba(255, 182, 193, 0.2);
+}
+
+/* Elementos decorativos */
+.decorative-shape {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.6;
+}
+
+.shape-pink {
+  background: var(--light-pink);
+}
+
+.shape-yellow {
+  background: var(--light-yellow);
+}
+
+.shape-blue {
+  background: var(--light-blue);
+}
+
+/* Animaciones suaves */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .title-script {
+    font-size: 2rem;
+  }
+  
+  .sticky-note {
+    transform: none;
+  }
+}

@@ -1,17 +1,29 @@
-// src/context/AuthContext.js
 import { createContext, useState, useContext } from "react";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(localStorage.getItem("token"));
-  const [usuario, setUsuario] = useState(
-    JSON.parse(localStorage.getItem("usuario")) || null
-  );
+  const [token, setToken] = useState(localStorage.getItem("token") || null);
+
+  const [usuario, setUsuario] = useState(() => {
+    try {
+      const storedUser = localStorage.getItem("usuario");
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      console.error("Error parsing usuario from localStorage:", error);
+      return null;
+    }
+  });
 
   const login = (jwt, userData) => {
+    if (!jwt || !userData) {
+      console.warn("login called without proper token or userData");
+      return;
+    }
+
     setToken(jwt);
     setUsuario(userData);
+
     localStorage.setItem("token", jwt);
     localStorage.setItem("usuario", JSON.stringify(userData));
   };
@@ -19,6 +31,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setToken(null);
     setUsuario(null);
+
     localStorage.removeItem("token");
     localStorage.removeItem("usuario");
   };

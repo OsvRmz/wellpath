@@ -11,6 +11,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import NotFound from "../pages/NotFound"; 
 import CrearHabito from "../pages/CrearHabito";
 import PerfilUsuario from "../pages/PerfilUsuario";
+import Vacio from "../pages/Vacio"
 
 export default function AppRouter() {
   return (

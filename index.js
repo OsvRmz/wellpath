@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 const PORT = process.env.PORT || 3000;
-const SECRET = process.env.JWT_SECRET || "cambiame";
+const SECRET = process.env.JWT_SECRET || "Secretooooo";
 const __dirname = path.resolve();
 
 mongoose.set("strictQuery", false);

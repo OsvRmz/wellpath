@@ -220,7 +220,7 @@ export default function Principal() {
                     <div className="text-sm text-gray-700">
                       Aún no tienes hábitos.{" "}
                       <button
-                        onClick={() => navigate("/dashboard/crear-habito")}
+                        onClick={() => navigate("/dashboard/nuevo")}
                         className="underline font-semibold text-gray-900"
                       >
                         Crear hábito
